@@ -69,7 +69,7 @@ This file is used to store the list of mods you have, along with the loader and 
 #### Commented example:
 ```toml
 [mods]
-  # The key is the slug of the mod on Modrinth, and the value is the version ID
+	# The key is the slug of the mod on Modrinth, and the value is the version ID
 	lambdabettergrass = "JiU63vNt"
 	ok-zoomer = "kvcXLIhw"
 	fabric-api = "LCbP8k6I"
@@ -79,7 +79,7 @@ This file is used to store the list of mods you have, along with the loader and 
 
 # Settings here will be used for resolving the latest compatible version of mods.
 [details]
-  # This can be 'fabric' or 'forge', as these are the platforms that Modrinth supports
+	# This can be 'fabric' or 'forge', as these are the platforms that Modrinth supports
 	loader = "fabric"
 	gameVersion = "21w06a"
 ```
