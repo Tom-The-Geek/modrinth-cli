@@ -1,4 +1,4 @@
-package me.geek.tom.modrinthcli.util;
+package me.geek.tom.modrinthcli.util.cache;
 
 import me.tongfei.progressbar.*;
 import okhttp3.Request;
@@ -30,27 +30,45 @@ public class CachedDownloader {
         }
     }
 
-    public void download(String url, Path output) throws IOException {
+    public void download(DownloadTarget target, Path output) throws IOException {
         String filename = output.getFileName().toString();
-        Path cacheFile = this.downloadToCache(url, filename);
+        Path cacheFile = this.getFromCache(target, filename);
         Files.copy(cacheFile, output);
     }
 
-    private Path downloadToCache(String url, String filename) throws IOException {
-        Path output = this.cachePath.resolve(filename);
-        if (Files.exists(output)) return output; // TODO: verify hash?
+    private boolean isInCache(DownloadTarget target) {
+        return Files.exists(this.getCachePath(target));
+    }
 
-        Request request = new Request.Builder().url(url).build();
+    private Path getCachePath(DownloadTarget target) {
+        return this.cachePath.resolve(target.modId).resolve(target.versionId).resolve(target.sha1 + ".cache");
+    }
+
+    private Path downloadToCacheFile(DownloadTarget target, String filename) throws IOException {
+        Path output = this.getCachePath(target);
+
+        Request request = new Request.Builder().url(target.url).build();
         Response response = OKHTTP.newCall(request).execute();
         if (!response.isSuccessful()) {
             throw new IOException("Failed to download file: " + response);
         }
         ResponseBody body = response.body();
+
+        assert body != null;
         InputStream is = ProgressBar.wrap(body.byteStream(), new ProgressBarBuilder()
                 .setTaskName(getTaskName(filename))
                 .setInitialMax(body.contentLength()));
         FileUtils.copyInputStreamToFile(is, output.toFile());
+
         return output;
+    }
+
+    private Path getFromCache(DownloadTarget target, String filename) throws IOException {
+        if (this.isInCache(target)) {
+            return this.getCachePath(target);
+        }
+
+        return downloadToCacheFile(target, filename);
     }
 
     private String getTaskName(String filename) {

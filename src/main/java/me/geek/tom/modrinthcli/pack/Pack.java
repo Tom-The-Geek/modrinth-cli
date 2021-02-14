@@ -2,13 +2,14 @@ package me.geek.tom.modrinthcli.pack;
 
 import com.electronwill.nightconfig.core.conversion.ObjectConverter;
 import com.electronwill.nightconfig.core.file.FileConfig;
-import me.geek.tom.modrinthcli.util.CachedDownloader;
 import me.geek.tom.modrinthcli.exception.VersionNotFoundException;
 import me.geek.tom.modrinthcli.installcache.InstalledModsCacheFile;
 import me.geek.tom.modrinthcli.modrinthapi.ModDetails;
 import me.geek.tom.modrinthcli.modrinthapi.ModVersion;
+import me.geek.tom.modrinthcli.util.cache.CachedDownloader;
 import me.geek.tom.modrinthcli.util.Logger;
 import me.geek.tom.modrinthcli.util.VersionPair;
+import me.geek.tom.modrinthcli.util.cache.DownloadTarget;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -130,7 +131,7 @@ public class Pack {
         ModVersion.File file = modVersion.files.get(0);
         Path output = getModsDir().resolve(file.filename);
         if (!Files.exists(output)) {
-            CachedDownloader.INSTANCE.download(file.url, output);
+            CachedDownloader.INSTANCE.download(new DownloadTarget(modVersion.modId, modVersion.id, file.hashes.get("sha1"), file.url), output);
             this.installedModsCache.addMod(getModsDir(), slug, modVersion.modId, modVersion.id, file.filename);
         }
     }
