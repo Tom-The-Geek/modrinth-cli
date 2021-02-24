@@ -1,0 +1,22 @@
+name: Rust
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, 'windows-latest']
+        rust: [stable]
+
+    steps:
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: ${{ matrix.rust }}
+      - uses: actions/checkout@v1
+      - name: Build release
+        run: cargo build --verbose --release
