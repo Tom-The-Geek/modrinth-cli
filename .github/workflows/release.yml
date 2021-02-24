@@ -27,11 +27,11 @@ jobs:
         uses: AButler/upload-release-assets@v2.0
         if: matrix.os == 'windows-latest'
         with:
-          files: 'target/release/server-launcher.exe'
+          files: 'target/release/modrinth-cli.exe'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload GitHub release (unix)
         uses: AButler/upload-release-assets@v2.0
         if: matrix.os != 'windows-latest'
         with:
-          files: 'target/release/server-launcher'
+          files: 'target/release/modrinth-cli'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
